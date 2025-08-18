@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizar Projeto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .projeto-detalhes {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .projeto-header {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .projeto-titulo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .projeto-data {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .projeto-descricao {
+            margin-bottom: 2rem;
+        }
+
+        .projeto-descricao h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.75rem;
+        }
+
+        .projeto-descricao p {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .tinkercad-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .tinkercad-section h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tinkercad-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .tinkercad-link:hover {
+            background: #f3f4f6;
+            border-color: #3b82f6;
+        }
+
+        .componentes-section {
+            margin-bottom: 2rem;
+        }
+
+        .componentes-section h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .componentes-lista {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .componente-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .componente-nome {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .componente-quantidade {
+            background: #3b82f6;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .acoes-projeto {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .btn-editar {
+            background: #3b82f6;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .btn-editar:hover {
+            background: #2563eb;
+        }
+
+        .btn-deletar {
+            background: #ef4444;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .btn-deletar:hover {
+            background: #dc2626;
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+        }
+
+        .loading.show {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/" class="logo">Projetos</a>
+            <a href="/" class="botao-voltar">← Voltar</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="projeto-container">
+            <!-- Conteúdo do projeto será carregado aqui -->
+        </div>
+    </main>
+
+    <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+        <p>Carregando projeto...</p>
+    </div>
+
+    <script>
+        // Função para obter o ID do projeto da URL
+        function obterIdProjeto() {
+            const path = window.location.pathname;
+            const match = path.match(/\/view\/(\d+)/);
+            return match ? parseInt(match[1]) : null;
+        }
+
+        // Função para formatar data
+        function formatarData(dataString) {
+            if (!dataString) return 'Data não disponível';
+            const data = new Date(dataString);
+            return data.toLocaleDateString('pt-BR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Função para carregar projeto
+        async function carregarProjeto() {
+            const projetoId = obterIdProjeto();
+            
+            if (!projetoId) {
+                document.getElementById('projeto-container').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Projeto não encontrado</h3>
+                        <p>O ID do projeto não foi especificado na URL.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            loading.classList.add('show');
+
+            try {
+                const response = await fetch(`/api/projetos/${projetoId}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Erro ${response.status}: ${response.statusText}`);
+                }
+
+                const projeto = await response.json();
+                exibirProjeto(projeto);
+                
+            } catch (error) {
+                console.error('Erro ao carregar projeto:', error);
+                document.getElementById('projeto-container').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Erro ao carregar projeto</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            } finally {
+                loading.classList.remove('show');
+            }
+        }
+
+        // Função para exibir projeto
+        function exibirProjeto(projeto) {
+            const container = document.getElementById('projeto-container');
+            
+            const componentesHtml = projeto.componentes && projeto.componentes.length > 0 
+                ? projeto.componentes.map(comp => `
+                    <div class="componente-item">
+                        <span class="componente-nome">${comp.nome}</span>
+                        <span class="componente-quantidade">${comp.quantidade}</span>
+                    </div>
+                `).join('')
+                : '<p class="empty-state">Nenhum componente cadastrado</p>';
+
+            const tinkercadHtml = projeto.tinkercad_link 
+                ? `
+                    <div class="tinkercad-section">
+                        <h3>
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5l6 6-6 6m-3-12l-6 6 6 6" />
+                            </svg>
+                            Link do Tinkercad
+                        </h3>
+                        <a href="${projeto.tinkercad_link}" target="_blank" class="tinkercad-link">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            </svg>
+                            Abrir no Tinkercad
+                        </a>
+                    </div>
+                `
+                : '';
+
+            container.innerHTML = `
+                <div class="projeto-detalhes">
+                    <div class="projeto-header">
+                        <h1 class="projeto-titulo">${projeto.nome}</h1>
+                        <p class="projeto-data">Criado em ${formatarData(projeto.data_criacao)}</p>
+                    </div>
+
+                    <div class="projeto-descricao">
+                        <h3>Descrição</h3>
+                        <p>${projeto.descricao || 'Nenhuma descrição fornecida'}</p>
+                    </div>
+
+                    ${tinkercadHtml}
+
+                    <div class="componentes-section">
+                        <h3>
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+                            </svg>
+                            Componentes (${projeto.componentes ? projeto.componentes.length : 0})
+                        </h3>
+                        <div class="componentes-lista">
+                            ${componentesHtml}
+                        </div>
+                    </div>
+
+                    <div class="acoes-projeto">
+                        <button class="btn-editar" onclick="editarProjeto(${projeto.id})">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                            </svg>
+                            Editar
+                        </button>
+                        <button class="btn-deletar" onclick="deletarProjeto(${projeto.id})">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            </svg>
+                            Deletar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Função para editar projeto
+        function editarProjeto(id) {
+            window.location.href = `/edit/${id}`;
+        }
+
+        // Função para deletar projeto
+        async function deletarProjeto(id) {
+            if (!confirm('Tem certeza que deseja deletar este projeto? Esta ação não pode ser desfeita.')) {
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            loading.classList.add('show');
+
+            try {
+                const response = await fetch(`/api/projetos/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erro ${response.status}: ${response.statusText}`);
+                }
+
+                alert('Projeto deletado com sucesso!');
+                window.location.href = '/';
+                
+            } catch (error) {
+                console.error('Erro ao deletar projeto:', error);
+                alert(`Erro ao deletar projeto: ${error.message}`);
+            } finally {
+                loading.classList.remove('show');
+            }
+        }
+
+        // Carregar projeto quando a página carregar
+        document.addEventListener('DOMContentLoaded', carregarProjeto);
+    </script>
+</body>
+</html>
+
