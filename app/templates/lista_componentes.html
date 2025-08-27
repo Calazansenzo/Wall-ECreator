@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-microchip"></i> Componentes</h2>
+    <a href="{{ url_for('main.novo_componente') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Novo Componente
+    </a>
+</div>
+
+{% if componentes %}
+    <div class="row">
+        {% for componente in componentes %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ componente.nome }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            Quantidade: {{ componente.quantidade }} unidades
+                        </h6>
+                        
+                        <p class="card-text">
+                            <small class="text-muted">{{ componente.descricao[:100] }}{% if componente.descricao|length > 100 %}...{% endif %}</small>
+                        </p>
+                        
+                        {% if componente.projetos %}
+                            <div class="mb-2">
+                                <small class="text-muted">Usado em:</small>
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% for projeto in componente.projetos[:3] %}
+                                        <span class="badge bg-secondary">{{ projeto.nome }}</span>
+                                    {% endfor %}
+                                    {% if componente.projetos|length > 3 %}
+                                        <span class="badge bg-light text-dark">+{{ componente.projetos|length - 3 }} mais</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="mb-2">
+                                <small class="text-muted">Não está sendo usado em nenhum projeto</small>
+                            </div>
+                        {% endif %}
+                        
+                        <p class="card-text">
+                            <small class="text-primary">
+                                <a href="{{ componente.url }}" target="_blank" class="text-decoration-none">
+                                    <i class="fas fa-external-link-alt"></i> Ver mais
+                                </a>
+                            </small>
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('main.detalhes_componente', id=componente.id) }}" class="btn btn-info">
+                                <i class="fas fa-eye"></i> Detalhes
+                            </a>
+                            <a href="{{ url_for('main.editar_componente', id=componente.id) }}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a href="{{ url_for('main.excluir_componente', id=componente.id) }}" class="btn btn-danger" 
+                               onclick="return confirm('Tem certeza que deseja excluir este componente?')">
+                                <i class="fas fa-trash"></i> Excluir
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Nenhum componente cadastrado.
+        <a href="{{ url_for('main.novo_componente') }}" class="alert-link">Cadastre o primeiro componente</a>.
+    </div>
+{% endif %}
+{% endblock %}

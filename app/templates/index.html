@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4"><i class="fas fa-robot"></i> Wall-E Creator</h1>
+            <p class="lead">Gerencie sua coleção de componentes robóticos e projetos.</p>
+            <hr class="my-4">
+            <p>Cadastre projetos, adicione componentes e visualizi-os de forma organizado.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-project-diagram"></i> Projetos</h5>
+                <h2 class="text-primary">{{ total_projetos }}</h2>
+                <p class="card-text">Projetos cadastrados</p>
+                <a href="{{ url_for('main.lista_projetos') }}" class="btn btn-primary">Ver Projetos</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-microchip"></i> Componentes</h5>
+                <h2 class="text-success">{{ total_componentes }}</h2>
+                <p class="card-text">Componentes cadastrados</p>
+                <a href="{{ url_for('main.lista_componentes') }}" class="btn btn-success">Ver Componentes</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-clock"></i> Últimos Componentes Adicionados</h5>
+            </div>
+            <div class="card-body">
+                {% if ultimos_componentes %}
+                    <div class="list-group">
+                        {% for componente in ultimos_componentes %}
+                            <a href="{{ url_for('main.detalhes_componente', id=componente.id) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ componente.nome }}</h6>
+                                    <small>Qtd: {{ componente.quantidade }}</small>
+                                </div>
+                                <p class="mb-1">{{ componente.descricao[:100] }}{% if componente.descricao|length > 100 %}...{% endif %}</p>
+                                <small class="text-muted">
+                                    Usado em: 
+                                    {% if componente.projetos %}
+                                        {% for projeto in componente.projetos[:2] %}
+                                            <span class="badge bg-secondary">{{ projeto.nome }}</span>
+                                        {% endfor %}
+                                        {% if componente.projetos|length > 2 %}
+                                            <span class="badge bg-light text-dark">+{{ componente.projetos|length - 2 }} mais</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted">Nenhum projeto</span>
+                                    {% endif %}
+                                </small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Nenhum componente cadastrado ainda.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

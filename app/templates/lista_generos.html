@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-tags"></i> Gêneros</h2>
+    <a href="{{ url_for('main.novo_genero') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Novo Gênero
+    </a>
+</div>
+
+{% if generos %}
+    <div class="row">
+        {% for genero in generos %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ genero.nome }}</h5>
+                        <p class="card-text text-muted">ID: {{ genero.id }}</p>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('main.editar_genero', id=genero.id) }}" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a href="{{ url_for('main.excluir_genero', id=genero.id) }}" class="btn btn-danger" 
+                               onclick="return confirm('Tem certeza que deseja excluir este gênero?')">
+                                <i class="fas fa-trash"></i> Excluir
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> Nenhum gênero cadastrado.
+    </div>
+{% endif %}
+{% endblock %}

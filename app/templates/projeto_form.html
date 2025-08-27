@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2><i class="fas fa-project-diagram"></i> {{ title }}</h2>
+
+<form method="POST" class="needs-validation" novalidate>
+    {{ form.hidden_tag() }}
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                {{ form.nome.label(class="form-label") }}
+                {{ form.nome(class="form-control", placeholder="Nome do projeto") }}
+                {% for error in form.nome.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+            </div>
+            
+            <div class="mb-3">
+                {{ form.descricao.label(class="form-label") }}
+                {{ form.descricao(class="form-control", placeholder="Descrição do projeto", rows="3") }}
+                {% for error in form.descricao.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="mb-3">
+                {{ form.url.label(class="form-label") }}
+                {{ form.url(class="form-control", placeholder="URL do projeto") }}
+                {% for error in form.url.errors %}
+                    <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="mb-4">
+        {{ form.componentes.label(class="form-label fw-bold") }}
+        <p class="text-muted small">Selecione os componentes que serão utilizados neste projeto:</p>
+        
+        <div class="border p-3 rounded bg-light">
+            {% if componentes %}
+                <div class="row">
+                    {% for componente in componentes %}
+                        <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                            <div class="card h-100 {% if form.componentes.data is not none and componente.id in form.componentes.data %}border-primary bg-light{% endif %}">
+                                <div class="card-body p-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="componentes" 
+                                               value="{{ componente.id }}" id="componente{{ componente.id }}"
+                                               {% if form.componentes.data is not none and componente.id in form.componentes.data %}checked{% endif %}
+                                               onchange="toggleCard(this)">
+                                        <label class="form-check-label w-100" for="componente{{ componente.id }}">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <strong class="d-block">{{ componente.nome }}</strong>
+                                                    <small class="text-muted d-block mt-1">
+                                                        Qtd: {{ componente.quantidade }} unidades
+                                                    </small>
+                                                </div>
+                                                <span class="badge bg-success ms-2">
+                                                    <i class="fas fa-check" style="display: '{% if form.componentes.data is not none and componente.id in form.componentes.data %}inline{% else %}none{% endif %}';"></i>
+                                                </span>
+                                            </div>
+                                            
+                                            <p class="mb-1 mt-2 small text-muted">
+                                                {{ componente.descricao[:60] }}{% if componente.descricao|length > 60 %}...{% endif %}
+                                            </p>
+                                            
+                                            {% if componente.projetos %}
+                                                <div class="mt-2">
+                                                    <small class="text-info">
+                                                        Usado em {{ componente.projetos|length }} projeto(s)
+                                                    </small>
+                                                </div>
+                                            {% endif %}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-warning mt-2">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    Nenhum componente cadastrado. 
+                    <a href="{{ url_for('main.novo_componente') }}" class="alert-link">Cadastre um componente primeiro</a>.
+                </div>
+            {% endif %}
+        </div>
+        {% for error in form.componentes.errors %}
+            <div class="invalid-feedback d-block">{{ error }}</div>
+        {% endfor %}
+    </div>
+    
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-save"></i> {{ form.submit.label.text }}
+        </button>
+        <a href="{{ url_for('main.lista_projetos') }}" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancelar
+        </a>
+    </div>
+</form>
+
+{% if projeto %}
+    <div class="mt-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Componentes Atualmente no Projeto:</h5>
+            </div>
+            <div class="card-body">
+                {% if projeto.componentes %}
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for componente in projeto.componentes %}
+                            <span class="badge bg-primary fs-6">
+                                {{ componente.nome }} ({{ componente.quantidade }} unidades)
+                            </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <span class="text-muted">Nenhum componente associado</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<script>
+function toggleCard(checkbox) {
+    const card = checkbox.closest('.card');
+    const checkIcon = card.querySelector('.fa-check');
+    
+    if (checkbox.checked) {
+        card.classList.add('border-primary', 'bg-light');
+        checkIcon.style.display = 'inline';
+    } else {
+        card.classList.remove('border-primary', 'bg-light');
+        checkIcon.style.display = 'none';
+    }
+}
+</script>
+
+<style>
+.form-check-label {
+    cursor: pointer;
+}
+
+.card {
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.form-check-input {
+    transform: scale(1.2);
+}
+</style>
+{% endblock %}
