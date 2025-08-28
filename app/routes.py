@@ -1,5 +1,13 @@
 from flask import render_template, flash, redirect, url_for, Blueprint, request, jsonify
-from app import db
+
+# Importar db do módulo raiz
+try:
+    from __init__ import db
+except ImportError:
+    # Para quando executado dentro do contexto da aplicação
+    from flask_sqlalchemy import SQLAlchemy
+    db = SQLAlchemy()
+
 from app.models import Projeto, Componente
 import sqlalchemy as sa   
 from app.forms import ProjetoForm, ComponenteForm, ComponenteEditForm

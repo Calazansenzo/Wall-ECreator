@@ -3,7 +3,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from typing import Optional, List
 import sqlalchemy as sa
 import sqlalchemy.orm as so
-from app import db
+
+# Importar db do módulo raiz
+try:
+    from __init__ import db
+except ImportError:
+    # Para quando executado dentro do contexto da aplicação
+    from flask_sqlalchemy import SQLAlchemy
+    db = SQLAlchemy()
 
 # Tabela de associação para muitos-para-muitos entre Projeto e Componente
 class ProjetoComponente(db.Model):
